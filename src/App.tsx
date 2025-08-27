@@ -141,24 +141,24 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4 dark:bg-slate-950 transition-colors">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold mb-2">视频转录助手</h1>
-            <p className="text-lg text-muted-foreground">输入YouTube或其他视频链接，自动转录并生成总结</p>
+            <h1 className="text-4xl font-bold mb-2 dark:text-slate-100 bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">视频转录助手</h1>
+            <p className="text-lg text-muted-foreground dark:text-slate-400">输入YouTube或其他视频链接，自动转录并生成总结</p>
           </div>
           <ThemeToggle />
         </div>
 
-        <Card className="mb-6">
+        <Card className="mb-6 dark:bg-slate-900 dark:border-slate-700 shadow-lg dark:shadow-2xl">
           <CardHeader>
-            <CardTitle>配置选项</CardTitle>
-            <CardDescription>设置视频下载路径和API密钥</CardDescription>
+            <CardTitle className="dark:text-slate-100">配置选项</CardTitle>
+            <CardDescription className="dark:text-slate-400">设置视频下载路径和API密钥</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="download-path">下载路径</Label>
+              <Label htmlFor="download-path" className="dark:text-slate-200">下载路径</Label>
               <div className="flex gap-3 items-center">
                 <Input
                   id="download-path"
@@ -166,13 +166,14 @@ function AppContent() {
                   placeholder="选择视频和音频文件的保存位置"
                   readOnly
                   disabled={isProcessing}
-                  className="flex-1"
+                  className="flex-1 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:placeholder:text-slate-500"
                 />
                 <Button 
                   onClick={selectDownloadPath}
                   disabled={isProcessing}
                   variant="outline"
                   size="default"
+                  className="dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   <FolderOpen className="w-4 h-4 mr-2" />
                   选择路径
@@ -181,7 +182,7 @@ function AppContent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="video-url">视频URL</Label>
+              <Label htmlFor="video-url" className="dark:text-slate-200">视频URL</Label>
               <Input
                 id="video-url"
                 type="url"
@@ -189,11 +190,12 @@ function AppContent() {
                 onChange={(e) => setVideoUrl(e.target.value)}
                 placeholder="请输入视频URL (例如: https://www.youtube.com/watch?v=...)"
                 disabled={isProcessing}
+                className="dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:placeholder:text-slate-500"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="api-key">OpenAI API Key (可选)</Label>
+              <Label htmlFor="api-key" className="dark:text-slate-200">OpenAI API Key (可选)</Label>
               <Input
                 id="api-key"
                 type="password"
@@ -201,8 +203,9 @@ function AppContent() {
                 onChange={(e) => setApiKey(e.target.value)}
                 placeholder="输入API密钥获得更好的AI总结，留空使用简单总结"
                 disabled={isProcessing}
+                className="dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:placeholder:text-slate-500"
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground dark:text-slate-500">
                 💡 API密钥仅用于本次会话，不会被保存
               </p>
             </div>
@@ -212,7 +215,7 @@ function AppContent() {
                 onClick={processVideo}
                 disabled={isProcessing || !videoUrl.trim()}
                 size="lg"
-                className="px-8"
+                className="px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 dark:from-blue-500 dark:to-purple-500 dark:hover:from-blue-600 dark:hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {isProcessing ? (
                   <>
@@ -231,15 +234,15 @@ function AppContent() {
         </Card>
 
         {status && (
-          <Card className="mb-6">
+          <Card className="mb-6 dark:bg-slate-900 dark:border-slate-700">
             <CardContent className="pt-6">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
-                  <div className="w-3 h-3 bg-primary rounded-full animate-pulse mt-1"></div>
+                  <div className="w-3 h-3 bg-primary dark:bg-blue-500 rounded-full animate-pulse mt-1"></div>
                 </div>
                 <div className="ml-3 flex-1">
-                  <p className="text-xs font-medium whitespace-pre-wrap leading-relaxed">
-                    <span className="font-bold">状态：</span>{status}
+                  <p className="text-xs font-medium whitespace-pre-wrap leading-relaxed dark:text-slate-200">
+                    <span className="font-bold dark:text-slate-100">状态：</span>{status}
                   </p>
                 </div>
               </div>
@@ -248,10 +251,10 @@ function AppContent() {
         )}
 
         {isProcessing && (
-          <Card className="mb-6">
+          <Card className="mb-6 dark:bg-slate-900 dark:border-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              <CardTitle className="flex items-center dark:text-slate-100">
+                <Loader2 className="w-5 h-5 mr-2 animate-spin text-blue-500" />
                 处理进度
               </CardTitle>
             </CardHeader>
@@ -265,15 +268,15 @@ function AppContent() {
                 const StepIcon = stepIcons[step.id as keyof typeof stepIcons] || Play;
                 
                 return (
-                  <div key={step.id} className="border rounded-lg p-4 bg-card">
+                  <div key={step.id} className="border rounded-lg p-4 bg-card dark:bg-slate-800 dark:border-slate-600">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${
                           step.completed 
-                            ? 'bg-green-500 text-white' 
+                            ? 'bg-green-500 text-white dark:bg-green-600' 
                             : step.inProgress 
-                            ? 'bg-primary text-primary-foreground animate-pulse' 
-                            : 'bg-muted text-muted-foreground'
+                            ? 'bg-primary text-primary-foreground dark:bg-blue-500 dark:text-white animate-pulse' 
+                            : 'bg-muted text-muted-foreground dark:bg-slate-700 dark:text-slate-400'
                         }`}>
                           {step.completed ? (
                             <CheckCircle className="w-4 h-4" />
@@ -284,33 +287,33 @@ function AppContent() {
                           )}
                         </div>
                         <div className="flex items-center">
-                          <StepIcon className="w-4 h-4 mr-2 text-muted-foreground" />
-                          <h4 className="font-semibold">{step.name}</h4>
+                          <StepIcon className="w-4 h-4 mr-2 text-muted-foreground dark:text-slate-400" />
+                          <h4 className="font-semibold dark:text-slate-200">{step.name}</h4>
                         </div>
                       </div>
                       <span className={`text-sm font-medium ${
                         step.completed 
-                          ? 'text-green-600' 
+                          ? 'text-green-600 dark:text-green-400' 
                           : step.inProgress 
-                          ? 'text-primary' 
-                          : 'text-muted-foreground'
+                          ? 'text-primary dark:text-blue-400' 
+                          : 'text-muted-foreground dark:text-slate-500'
                       }`}>
                         {step.completed ? '✅ 完成' : step.inProgress ? '🔄 进行中' : '⏳ 等待中'}
                       </span>
                     </div>
                     
                     <div className="mb-3">
-                      <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                      <div className="flex justify-between text-sm text-muted-foreground dark:text-slate-400 mb-2">
                         <span>进度</span>
                         <span>{step.progress}%</span>
                       </div>
-                      <Progress value={step.progress} className="w-full" />
+                      <Progress value={step.progress} className="w-full dark:bg-slate-700" />
                     </div>
 
                     {step.output.length > 0 && (
                       <div>
-                        <h5 className="text-sm font-medium mb-2">输出日志：</h5>
-                        <div className="bg-slate-950 text-green-400 text-xs font-mono p-3 rounded-lg max-h-32 overflow-y-auto border">
+                        <h5 className="text-sm font-medium mb-2 dark:text-slate-200">输出日志：</h5>
+                        <div className="bg-slate-950 dark:bg-black text-green-400 dark:text-green-300 text-xs font-mono p-3 rounded-lg max-h-32 overflow-y-auto border dark:border-slate-800">
                           {step.output.map((line, lineIndex) => (
                             <div key={lineIndex} className="mb-1">
                               {line}
@@ -327,16 +330,16 @@ function AppContent() {
         )}
 
         {transcript && (
-          <Card className="mb-6">
+          <Card className="mb-6 dark:bg-slate-900 dark:border-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="w-5 h-5 mr-2" />
+              <CardTitle className="flex items-center dark:text-slate-100">
+                <FileText className="w-5 h-5 mr-2 text-blue-500" />
                 转录文本
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-muted/50 p-6 rounded-lg max-h-80 overflow-auto">
-                <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed">
+              <div className="bg-muted/50 dark:bg-slate-800 p-6 rounded-lg max-h-80 overflow-auto border dark:border-slate-600">
+                <pre className="whitespace-pre-wrap text-sm font-mono leading-relaxed dark:text-slate-200">
                   {transcript}
                 </pre>
               </div>
@@ -345,16 +348,16 @@ function AppContent() {
         )}
 
         {summary && (
-          <Card>
+          <Card className="dark:bg-slate-900 dark:border-slate-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Brain className="w-5 h-5 mr-2" />
+              <CardTitle className="flex items-center dark:text-slate-100">
+                <Brain className="w-5 h-5 mr-2 text-purple-500" />
                 AI总结
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-gradient-to-br from-primary/5 to-purple-500/5 p-6 rounded-lg border">
-                <pre className="whitespace-pre-wrap text-sm leading-relaxed">
+              <div className="bg-gradient-to-br from-primary/5 to-purple-500/5 dark:from-purple-900/20 dark:to-blue-900/20 p-6 rounded-lg border dark:border-slate-600 dark:bg-slate-800/50">
+                <pre className="whitespace-pre-wrap text-sm leading-relaxed dark:text-slate-200">
                   {summary}
                 </pre>
               </div>
@@ -368,7 +371,7 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="system" storageKey="video-transcriber-theme">
+    <ThemeProvider storageKey="video-transcriber-theme">
       <AppContent />
     </ThemeProvider>
   );

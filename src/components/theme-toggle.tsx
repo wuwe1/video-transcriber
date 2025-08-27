@@ -6,15 +6,7 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
   const toggleTheme = () => {
-    if (theme === "dark") {
-      setTheme("light")
-    } else if (theme === "light") {
-      setTheme("dark")
-    } else {
-      // If system theme, toggle to opposite of current system preference
-      const systemIsDark = window.matchMedia("(prefers-color-scheme: dark)").matches
-      setTheme(systemIsDark ? "light" : "dark")
-    }
+    setTheme(theme === "dark" ? "light" : "dark")
   }
 
   return (
@@ -22,9 +14,17 @@ export function ThemeToggle() {
       variant="outline"
       size="icon"
       onClick={toggleTheme}
+      className={`relative overflow-hidden border-2 transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+        theme === "light" 
+          ? "border-orange-200 bg-orange-50 hover:bg-orange-100 hover:border-orange-300" 
+          : "border-slate-700 bg-slate-900 hover:bg-black hover:border-slate-600"
+      }`}
     >
-      <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      {theme === "light" ? (
+        <Sun className="h-[1.2rem] w-[1.2rem] text-orange-500 transition-all duration-300 hover:text-orange-600 hover:rotate-12" />
+      ) : (
+        <Moon className="h-[1.2rem] w-[1.2rem] text-blue-400 transition-all duration-300 hover:text-blue-300 hover:rotate-12" />
+      )}
       <span className="sr-only">切换主题</span>
     </Button>
   )
