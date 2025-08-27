@@ -3,7 +3,8 @@
     "allow": [
       "Bash(pnpm add:*)",
       "Bash(pnpm tauri:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
