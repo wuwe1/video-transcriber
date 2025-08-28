@@ -117,7 +117,7 @@ async fn select_download_path() -> Result<String, String> {
 }
 
 #[tauri::command]
-async fn process_video_pipeline(url: String, base_path: Option<String>, api_key: Option<String>) -> Result<String, String> {
+async fn process_video_pipeline(url: String, base_path: Option<String>, api_key: Option<String>, api_provider: Option<String>) -> Result<String, String> {
     let base_dir = base_path.unwrap_or_else(|| std::env::temp_dir().to_string_lossy().to_string());
     
     // 展开波浪号路径 (~/Downloads -> /Users/username/Downloads)
@@ -215,7 +215,11 @@ async fn process_video_pipeline(url: String, base_path: Option<String>, api_key:
     if !record.summarized && record.transcript_content.is_some() {
         results.push("正在生成总结...".to_string());
         let transcript = record.transcript_content.as_ref().unwrap();
-        match summarize_transcript_content(transcript, api_key).await {
+        let provider = match api_provider.as_deref() {
+            Some("deepseek") => ApiProvider::DeepSeek,
+            _ => ApiProvider::OpenAI,
+        };
+        match summarize_transcript_content(transcript, api_key, provider).await {
             Ok(summary_content) => {
                 record.summarized = true;
                 record.summary_content = Some(summary_content);
@@ -375,6 +379,28 @@ struct ChatCompletionRequest {
     temperature: f32,
 }
 
+#[derive(Clone)]
+enum ApiProvider {
+    OpenAI,
+    DeepSeek,
+}
+
+impl ApiProvider {
+    fn base_url(&self) -> &str {
+        match self {
+            ApiProvider::OpenAI => "https://api.openai.com/v1/chat/completions",
+            ApiProvider::DeepSeek => "https://api.deepseek.com/chat/completions",
+        }
+    }
+    
+    fn default_model(&self) -> &str {
+        match self {
+            ApiProvider::OpenAI => "gpt-3.5-turbo",
+            ApiProvider::DeepSeek => "deepseek-chat",
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 struct ChatChoice {
     message: ChatMessage,
@@ -385,7 +411,7 @@ struct ChatCompletionResponse {
     choices: Vec<ChatChoice>,
 }
 
-async fn summarize_transcript_content(transcript: &str, api_key: Option<String>) -> Result<String, String> {
+async fn summarize_transcript_content(transcript: &str, api_key: Option<String>, provider: ApiProvider) -> Result<String, String> {
     // 如果没有提供API密钥，使用本地LLM或返回简单总结
     if api_key.is_none() {
         return Ok(generate_simple_summary(&transcript));
@@ -406,14 +432,14 @@ async fn summarize_transcript_content(transcript: &str, api_key: Option<String>)
     ];
     
     let request = ChatCompletionRequest {
-        model: "gpt-3.5-turbo".to_string(),
+        model: provider.default_model().to_string(),
         messages,
         max_tokens: 500,
         temperature: 0.7,
     };
     
     match client
-        .post("https://api.openai.com/v1/chat/completions")
+        .post(provider.base_url())
         .header("Authorization", format!("Bearer {}", api_key))
         .header("Content-Type", "application/json")
         .json(&request)

@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CheckCircle, Clock, Loader2, FolderOpen, Play, FileText, Brain } from "lucide-react";
@@ -23,6 +24,7 @@ function AppContent() {
   const [videoUrl, setVideoUrl] = useState("");
   const [downloadPath, setDownloadPath] = useState("");
   const [apiKey, setApiKey] = useState("");
+  const [apiProvider, setApiProvider] = useState("openai");
   const [isProcessing, setIsProcessing] = useState(false);
   const [status, setStatus] = useState("");
   const [transcript, setTranscript] = useState("");
@@ -96,7 +98,8 @@ function AppContent() {
       const result = await invoke("process_video_pipeline", {
         url: videoUrl,
         basePath: downloadPath || null,
-        apiKey: apiKey || null
+        apiKey: apiKey || null,
+        apiProvider: apiProvider === "openai" ? null : apiProvider
       });
       
       // 解析返回的结果
@@ -195,18 +198,35 @@ function AppContent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="api-key" className="dark:text-slate-200">OpenAI API Key (可选)</Label>
+              <Label htmlFor="api-provider" className="dark:text-slate-200">AI服务提供商</Label>
+              <Select
+                id="api-provider"
+                value={apiProvider}
+                onChange={(e) => setApiProvider(e.target.value)}
+                disabled={isProcessing}
+                className="dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200"
+              >
+                <option value="openai">OpenAI (GPT-3.5)</option>
+                <option value="deepseek">DeepSeek</option>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="api-key" className="dark:text-slate-200">
+                {apiProvider === "deepseek" ? "DeepSeek" : "OpenAI"} API Key (可选)
+              </Label>
               <Input
                 id="api-key"
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="输入API密钥获得更好的AI总结，留空使用简单总结"
+                placeholder={`输入${apiProvider === "deepseek" ? "DeepSeek" : "OpenAI"} API密钥获得更好的AI总结，留空使用简单总结`}
                 disabled={isProcessing}
                 className="dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:placeholder:text-slate-500"
               />
               <p className="text-xs text-muted-foreground dark:text-slate-500">
-                💡 API密钥仅用于本次会话，不会被保存
+                💡 API密钥仅用于本次会话，不会被保存 | 
+                {apiProvider === "deepseek" ? " DeepSeek API相对更便宜" : " 支持多种模型"}
               </p>
             </div>
             
@@ -259,7 +279,7 @@ function AppContent() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {processSteps.map((step, index) => {
+              {processSteps.map((step) => {
                 const stepIcons = {
                   download: Play,
                   transcribe: FileText,
